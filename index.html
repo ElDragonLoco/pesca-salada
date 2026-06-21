@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesca Salada y Más</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── TOKENS ── */
+    :root {
+      --verde-profundo: #1a3a2a;
+      --verde-musgo:    #2d5a3d;
+      --verde-salvia:   #4a7c59;
+      --arena:          #c8a96e;
+      --arena-claro:    #e8d5a3;
+      --marron:         #5c3d1e;
+      --marron-claro:   #8b6340;
+      --crema:          #f5f0e8;
+      --texto:          #1a1a1a;
+      --texto-suave:    #555;
+      --blanco:         #ffffff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--crema);
+      color: var(--texto);
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--verde-profundo);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      border-bottom: 3px solid var(--arena);
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      font-size: 1.8rem;
+    }
+
+    .logo-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.25rem;
+      color: var(--arena);
+      line-height: 1.1;
+      letter-spacing: 0.01em;
+    }
+
+    .logo-text span {
+      display: block;
+      font-size: 0.7rem;
+      color: var(--arena-claro);
+      font-family: 'Inter', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    nav {
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    nav a {
+      color: var(--arena-claro);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    nav a:hover, nav a.activo {
+      background: var(--verde-musgo);
+      color: var(--arena);
+    }
+
+    .btn-publicar {
+      background: var(--arena) !important;
+      color: var(--verde-profundo) !important;
+      font-weight: 600 !important;
+      padding: 0.45rem 1.1rem !important;
+    }
+
+    .btn-publicar:hover {
+      background: var(--arena-claro) !important;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(160deg, var(--verde-profundo) 0%, var(--verde-musgo) 60%, var(--verde-salvia) 100%);
+      padding: 5rem 1.5rem 4rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(200, 169, 110, 0.2);
+      border: 1px solid var(--arena);
+      color: var(--arena);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 0.35rem 1rem;
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.8rem);
+      color: var(--blanco);
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--arena);
+    }
+
+    .hero p {
+      color: var(--arena-claro);
+      font-size: 1.1rem;
+      max-width: 520px;
+      margin: 0 auto 2.5rem;
+      line-height: 1.6;
+    }
+
+    .hero-acciones {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primario {
+      background: var(--arena);
+      color: var(--verde-profundo);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-primario:hover {
+      background: var(--arena-claro);
+      transform: translateY(-2px);
+    }
+
+    .btn-secundario {
+      background: transparent;
+      color: var(--arena-claro);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.85rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 2px solid rgba(200,169,110,0.4);
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .btn-secundario:hover {
+      border-color: var(--arena);
+      color: var(--arena);
+    }
+
+    /* ── STATS ── */
+    .stats {
+      background: var(--marron);
+      padding: 1.5rem;
+    }
+
+    .stats-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      text-align: center;
+      color: var(--arena-claro);
+    }
+
+    .stat strong {
+      display: block;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.8rem;
+      color: var(--arena);
+    }
+
+    .stat span {
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      opacity: 0.8;
+    }
+
+    /* ── SECCIÓN GENERAL ── */
+    section {
+      padding: 4rem 1.5rem;
+    }
+
+    .seccion-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .seccion-titulo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: var(--verde-profundo);
+      margin-bottom: 0.4rem;
+    }
+
+    .seccion-subtitulo {
+      color: var(--texto-suave);
+      margin-bottom: 2.5rem;
+      font-size: 1rem;
+    }
+
+    .linea-decorativa {
+      display: inline-block;
+      width: 48px;
+      height: 3px;
+      background: var(--arena);
+      margin-bottom: 1rem;
+      border-radius: 2px;
+    }
+
+    /* ── GRID CAPTURAS ── */
+    .grid-capturas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .tarjeta-captura {
+      background: var(--blanco);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .tarjeta-captura:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .tarjeta-imagen {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(135deg, var(--verde-musgo), var(--verde-profundo));
+      position: relative;
+    }
+
+    .tarjeta-placeholder {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, var(--verde-musgo) 0%, var(--verde-profundo) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.5rem;
+    }
+
+    .tarjeta-cuerpo {
+      padding: 1.2rem;
+    }
+
+    .tarjeta-especie {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--verde-profundo);
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .tarjeta-meta {
+      display: flex;
+      gap: 1rem;
+      font-size: 0.82rem;
+      color: var(--texto-suave);
+      margin-bottom: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .tarjeta-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .tarjeta-descripcion {
+      font-size: 0.9rem;
+      color: var(--texto-suave);
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .tarjeta-pie {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 0.8rem;
+      border-top: 1px solid #eee;
+    }
+
+    .pescador {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--verde-salvia);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      color: white;
+      font-weight: 600;
+    }
+
+    .pescador-nombre {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--verde-profundo);
+    }
+
+    .likes {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.85rem;
+      color: var(--texto-suave);
+      cursor: pointer;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      transition: background 0.2s;
+      border: none;
+      background: none;
+    }
+
+    .likes:hover {
+      background: #f5f0e8;
+    }
+
+    /* ── RANKING ── */
+    .seccion-ranking {
+      background: var(--verde-profundo);
+    }
+
+    .seccion-ranking .seccion-titulo {
+      color: var(--arena);
+    }
+
+    .seccion-ranking .seccion-subtitulo {
+      color: var(--arena-claro);
+      opacity: 0.8;
+    }
+
+    .ranking-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-width: 640px;
+    }
+
+    .ranking-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(200,169,110,0.15);
+      border-radius: 10px;
+      padding: 0.9rem 1.2rem;
+      transition: background 0.2s;
+    }
+
+    .ranking-item:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    .ranking-pos {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--arena);
+      width: 36px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .ranking-pos.oro   { color: #ffd700; }
+    .ranking-pos.plata { color: #c0c0c0; }
+    .ranking-pos.bronce{ color: #cd7f32; }
+
+    .ranking-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--verde-salvia);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+      color: white;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .ranking-info {
+      flex: 1;
+    }
+
+    .ranking-nombre {
+      font-weight: 600;
+      color: var(--blanco);
+      font-size: 0.95rem;
+    }
+
+    .ranking-detalle {
+      font-size: 0.8rem;
+      color: var(--arena-claro);
+      opacity: 0.7;
+    }
+
+    .ranking-puntos {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--arena);
+      font-weight: 700;
+    }
+
+    /* ── MODAL PUBLICAR ── */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 200;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-overlay.abierto {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--blanco);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+
+    .modal h2 {
+      font-family: 'Playfair Display', serif;
+      color: var(--verde-profundo);
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .campo {
+      margin-bottom: 1.1rem;
+    }
+
+    .campo label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--verde-profundo);
+      margin-bottom: 0.4rem;
+    }
+
+    .campo input,
+    .campo textarea,
+    .campo select {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 2px solid #e5e0d8;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--texto);
+      background: var(--crema);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .campo input:focus,
+    .campo textarea:focus,
+    .campo select:focus {
+      border-color: var(--verde-salvia);
+    }
+
+    .campo textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modal-acciones {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+      margin-top: 1.5rem;
+    }
+
+    .btn-cancelar {
+      background: transparent;
+      border: 2px solid #ddd;
+      color: var(--texto-suave);
+      padding: 0.65rem 1.4rem;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-cancelar:hover {
+      background: #f5f0e8;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--marron);
+      padding: 3rem 1.5rem 2rem;
+    }
+
+    .footer-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: var(--arena);
+      margin-bottom: 0.7rem;
+    }
+
+    .footer-desc {
+      color: var(--arena-claro);
+      opacity: 0.75;
+      font-size: 0.9rem;
+      line-height: 1.6;
+    }
+
+    .footer-col h4 {
+      color: var(--arena);
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1rem;
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--arena-claro);
+      opacity: 0.7;
+      text-decoration: none;
+      font-size: 0.88rem;
+      margin-bottom: 0.5rem;
+      transition: opacity 0.2s;
+    }
+
+    .footer-col a:hover { opacity: 1; }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(200,169,110,0.2);
+      padding-top: 1.5rem;
+      text-align: center;
+      color: var(--arena-claro);
+      opacity: 0.5;
+      font-size: 0.82rem;
+    }
+
+    /* ── SECCIÓN MAPA PLACEHOLDER ── */
+    .mapa-placeholder {
+      background: var(--verde-musgo);
+      border-radius: 12px;
+      height: 300px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--arena-claro);
+      gap: 1rem;
+      border: 2px dashed rgba(200,169,110,0.3);
+    }
+
+    .mapa-placeholder .icono-grande {
+      font-size: 3rem;
+      opacity: 0.6;
+    }
+
+    .mapa-placeholder p {
+      font-size: 1rem;
+      opacity: 0.7;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--verde-profundo);
+      color: var(--arena);
+      padding: 0.9rem 1.5rem;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-left: 4px solid var(--arena);
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.35s ease;
+      z-index: 300;
+    }
+
+    .toast.visible {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* ── RESPONSIVO ── */
+    @media (max-width: 700px) {
+      nav { display: none; }
+      .footer-top { grid-template-columns: 1fr; }
+      .stats-inner { gap: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-inner">
+    <a href="#" class="logo">
+      <span class="logo-icon">🎣</span>
+      <span class="logo-text">
+        Pesca Salada y Más
+        <span>Comunidad de pescadores</span>
+      </span>
+    </a>
+    <nav>
+      <a href="#capturas" class="activo">Capturas</a>
+      <a href="#spots">Spots</a>
+      <a href="#ranking">Ranking</a>
+      <a href="#" class="btn-publicar" onclick="abrirModal(event)">+ Publicar</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── HERO ── -->
+<section class="hero">
+  <div class="hero-badge">🌊 Comunidad activa</div>
+  <h1>Comparte tu pesca,<br>inspira a <em>otros</em></h1>
+  <p>El lugar donde los pescadores de mar publican sus capturas, descubren nuevos spots y compiten por el podio.</p>
+  <div class="hero-acciones">
+    <a href="#" class="btn-primario" onclick="abrirModal(event)">Publicar una captura</a>
+    <a href="#capturas" class="btn-secundario">Ver capturas →</a>
+  </div>
+</section>
+
+<!-- ── STATS ── -->
+<div class="stats">
+  <div class="stats-inner">
+    <div class="stat"><strong>247</strong><span>Pescadores</span></div>
+    <div class="stat"><strong>1.840</strong><span>Capturas</span></div>
+    <div class="stat"><strong>83</strong><span>Spots marcados</span></div>
+    <div class="stat"><strong>12</strong><span>Especies distintas</span></div>
+  </div>
+</div>
+
+<!-- ── CAPTURAS RECIENTES ── -->
+<section id="capturas">
+  <div class="seccion-inner">
+    <div class="linea-decorativa"></div>
+    <h2 class="seccion-titulo">Capturas recientes</h2>
+    <p class="seccion-subtitulo">Lo que la comunidad ha pescado esta semana</p>
+
+    <div class="grid-capturas">
+
+      <!-- Tarjeta 1 -->
+      <div class="tarjeta-captura">
+        <div class="tarjeta-placeholder">🐟</div>
+        <div class="tarjeta-cuerpo">
+          <div class="tarjeta-especie">Dorada — 2,4 kg</div>
+          <div class="tarjeta-meta">
+            <span>📍 Punta del Hidalgo</span>
+            <span>📏 48 cm</span>
+            <span>🕐 Hace 2h</span>
+          </div>
+          <p class="tarjeta-descripcion">Capturada al amanecer con pesca de fondo. Cebo de gamba fresca. Gran combate antes de subirla.</p>
+          <div class="tarjeta-pie">
+            <div class="pescador">
+              <div class="avatar">JM</div>
+              <span class="pescador-nombre">Juan M.</span>
+            </div>
+            <button class="likes" onclick="toggleLike(this)">🤍 24</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2 -->
+      <div class="tarjeta-captura">
+        <div class="tarjeta-placeholder">🦈</div>
+        <div class="tarjeta-cuerpo">
+          <div class="tarjeta-especie">Sama — 1,8 kg</div>
+          <div class="tarjeta-meta">
+            <span>📍 Bajamar</span>
+            <span>📏 41 cm</span>
+            <span>🕐 Hace 5h</span>
+          </div>
+          <p class="tarjeta-descripcion">Jigging desde barca a 40 metros de profundidad. La temporada está empezando muy bien.</p>
+          <div class="tarjeta-pie">
+            <div class="pescador">
+              <div class="avatar">CR</div>
+              <span class="pescador-nombre">Carlos R.</span>
+            </div>
+            <button class="likes" onclick="toggleLike(this)">🤍 17</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3 -->
+      <div class="tarjeta-captura">
+        <div class="tarjeta-placeholder">🐡</div>
+        <div class="tarjeta-cuerpo">
+          <div class="tarjeta-especie">Bocinegro — 3,1 kg</div>
+          <div class="tarjeta-meta">
+            <span>📍 El Médano</span>
+            <span>📏 52 cm</span>
+            <span>🕐 Ayer</span>
+          </div>
+          <p class="tarjeta-descripcion">Tremendo ejemplar capturado con curricán. Devuelta al mar después de las fotos. ¡Que siga creciendo!</p>
+          <div class="tarjeta-pie">
+            <div class="pescador">
+              <div class="avatar">AS</div>
+              <span class="pescador-nombre">Ana S.</span>
+            </div>
+            <button class="likes" onclick="toggleLike(this)">❤️ 38</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── SPOTS ── -->
+<section id="spots" style="background: #eee9df;">
+  <div class="seccion-inner">
+    <div class="linea-decorativa"></div>
+    <h2 class="seccion-titulo">Mapa de spots</h2>
+    <p class="seccion-subtitulo">Próximamente — mapa interactivo con los mejores puntos de pesca</p>
+    <div class="mapa-placeholder">
+      <div class="icono-grande">🗺️</div>
+      <p>El mapa de spots llegará en la próxima actualización</p>
+      <a href="#" class="btn-primario" style="font-size:0.9rem; padding: 0.6rem 1.4rem;">Avisar cuando esté listo</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── RANKING ── -->
+<section id="ranking" class="seccion-ranking">
+  <div class="seccion-inner">
+    <div class="linea-decorativa"></div>
+    <h2 class="seccion-titulo">Ranking del mes</h2>
+    <p class="seccion-subtitulo">Los pescadores más activos de junio</p>
+
+    <div class="ranking-lista">
+
+      <div class="ranking-item">
+        <div class="ranking-pos oro">🥇</div>
+        <div class="ranking-avatar">AS</div>
+        <div class="ranking-info">
+          <div class="ranking-nombre">Ana Suárez</div>
+          <div class="ranking-detalle">12 capturas · Mayor: 3,1 kg Bocinegro</div>
+        </div>
+        <div class="ranking-puntos">420 pts</div>
+      </div>
+
+      <div class="ranking-item">
+        <div class="ranking-pos plata">🥈</div>
+        <div class="ranking-avatar">JM</div>
+        <div class="ranking-info">
+          <div class="ranking-nombre">Juan Martínez</div>
+          <div class="ranking-detalle">10 capturas · Mayor: 2,4 kg Dorada</div>
+        </div>
+        <div class="ranking-puntos">385 pts</div>
+      </div>
+
+      <div class="ranking-item">
+        <div class="ranking-pos bronce">🥉</div>
+        <div class="ranking-avatar">CR</div>
+        <div class="ranking-info">
+          <div class="ranking-nombre">Carlos Rodríguez</div>
+          <div class="ranking-detalle">9 capturas · Mayor: 1,8 kg Sama</div>
+        </div>
+        <div class="ranking-puntos">310 pts</div>
+      </div>
+
+      <div class="ranking-item">
+        <div class="ranking-pos" style="color:#aaa; font-size:1rem;">4</div>
+        <div class="ranking-avatar" style="background: var(--marron-claro);">PG</div>
+        <div class="ranking-info">
+          <div class="ranking-nombre">Pedro González</div>
+          <div class="ranking-detalle">7 capturas · Mayor: 1,2 kg Abade</div>
+        </div>
+        <div class="ranking-puntos">240 pts</div>
+      </div>
+
+      <div class="ranking-item">
+        <div class="ranking-pos" style="color:#aaa; font-size:1rem;">5</div>
+        <div class="ranking-avatar" style="background: var(--marron-claro);">LH</div>
+        <div class="ranking-info">
+          <div class="ranking-nombre">Lucía Hernández</div>
+          <div class="ranking-detalle">6 capturas · Mayor: 0,9 kg Salema</div>
+        </div>
+        <div class="ranking-puntos">195 pts</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div>
+        <div class="footer-logo">🎣 Pesca Salada y Más</div>
+        <p class="footer-desc">La comunidad canaria de pescadores de mar. Comparte, aprende y compite con los mejores de la zona.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Comunidad</h4>
+        <a href="#capturas">Capturas</a>
+        <a href="#spots">Spots</a>
+        <a href="#ranking">Ranking</a>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <a href="#">Sobre el proyecto</a>
+        <a href="#">Contacto</a>
+        <a href="#">Normas</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      © 2026 Pesca Salada y Más · Hecho con ❤️ desde Canarias
+    </div>
+  </div>
+</footer>
+
+<!-- ── MODAL PUBLICAR ── -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <h2>🎣 Publicar captura</h2>
+    <div class="campo">
+      <label>Especie</label>
+      <input type="text" placeholder="Ej: Dorada, Sama, Bocinegro..." id="especie" />
+    </div>
+    <div class="campo">
+      <label>Peso (kg)</label>
+      <input type="number" placeholder="Ej: 2.4" id="peso" step="0.1" />
+    </div>
+    <div class="campo">
+      <label>Medida (cm)</label>
+      <input type="number" placeholder="Ej: 48" id="medida" />
+    </div>
+    <div class="campo">
+      <label>Spot / Lugar</label>
+      <input type="text" placeholder="Ej: Punta del Hidalgo" id="spot" />
+    </div>
+    <div class="campo">
+      <label>Descripción</label>
+      <textarea placeholder="¿Cómo fue la pesca? ¿Qué cebo usaste?" id="descripcion"></textarea>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn-primario" onclick="publicarCaptura()">Publicar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div class="toast" id="toast">✅ ¡Captura publicada!</div>
+
+<script>
+  // Modal
+  function abrirModal(e) {
+    e.preventDefault();
+    document.getElementById('modal').classList.add('abierto');
+  }
+
+  function cerrarModal() {
+    document.getElementById('modal').classList.remove('abierto');
+  }
+
+  document.getElementById('modal').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModal();
+  });
+
+  // Publicar (demo sin backend)
+  function publicarCaptura() {
+    const especie = document.getElementById('especie').value.trim();
+    if (!especie) { alert('Indica al menos la especie'); return; }
+    cerrarModal();
+    mostrarToast('✅ ¡Captura publicada! (pronto conectamos con Supabase)');
+  }
+
+  // Toast
+  function mostrarToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('visible');
+    setTimeout(() => t.classList.remove('visible'), 3500);
+  }
+
+  // Like toggle
+  function toggleLike(btn) {
+    const liked = btn.textContent.startsWith('❤️');
+    const num = parseInt(btn.textContent.replace(/\D+/g,''));
+    btn.textContent = liked ? `🤍 ${num - 1}` : `❤️ ${num + 1}`;
+  }
+</script>
+
+</body>
+</html>
