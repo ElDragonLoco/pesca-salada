@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pesca Salada y Más</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* ── TOKENS ── */
     :root {
@@ -683,7 +684,148 @@
       opacity: 1;
     }
 
-    /* ── RESPONSIVO ── */
+    /* ── PANEL USUARIO ── */
+    .btn-usuario {
+      background: rgba(200,169,110,0.15);
+      border: 1px solid rgba(200,169,110,0.4);
+      color: var(--arena);
+      padding: 0.4rem 1rem;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-usuario:hover { background: rgba(200,169,110,0.25); }
+
+    .usuario-info {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+    .usuario-nombre {
+      color: var(--arena);
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .btn-salir {
+      background: none;
+      border: none;
+      color: var(--arena-claro);
+      font-size: 0.8rem;
+      cursor: pointer;
+      opacity: 0.7;
+      font-family: 'Inter', sans-serif;
+      text-decoration: underline;
+    }
+    .btn-salir:hover { opacity: 1; }
+
+    /* ── TABS MODAL ── */
+    .tabs {
+      display: flex;
+      border-bottom: 2px solid #eee;
+      margin-bottom: 1.5rem;
+    }
+    .tab {
+      flex: 1;
+      padding: 0.7rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      color: var(--texto-suave);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      transition: color 0.2s, border-color 0.2s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: 'Inter', sans-serif;
+    }
+    .tab.activa {
+      color: var(--verde-profundo);
+      border-bottom-color: var(--arena);
+    }
+    .panel-tab { display: none; }
+    .panel-tab.visible { display: block; }
+
+    .msg-error {
+      background: #fff0f0;
+      border: 1px solid #ffcccc;
+      color: #c0392b;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+    .msg-exito {
+      background: #f0fff4;
+      border: 1px solid #b2dfdb;
+      color: #1a6b40;
+      padding: 0.7rem 1rem;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    /* ── SECCIÓN PESCADORES ── */
+    .grid-pescadores {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 1.2rem;
+    }
+    .tarjeta-pescador {
+      background: var(--blanco);
+      border-radius: 12px;
+      padding: 1.4rem;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+      border: 1px solid rgba(0,0,0,0.05);
+      transition: transform 0.2s;
+    }
+    .tarjeta-pescador:hover { transform: translateY(-3px); }
+    .avatar-grande {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--verde-salvia);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      font-weight: 700;
+      margin: 0 auto 0.8rem;
+    }
+    .pescador-apodo {
+      font-weight: 700;
+      color: var(--verde-profundo);
+      font-size: 0.95rem;
+      margin-bottom: 0.2rem;
+    }
+    .pescador-ubicacion {
+      font-size: 0.8rem;
+      color: var(--texto-suave);
+      margin-bottom: 0.6rem;
+    }
+    .pescador-puntos {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--arena);
+      font-weight: 700;
+    }
+    .cargando {
+      text-align: center;
+      color: var(--texto-suave);
+      padding: 2rem;
+      font-size: 0.95rem;
+    }
+
+
     @media (max-width: 700px) {
       nav { display: none; }
       .footer-top { grid-template-columns: 1fr; }
@@ -705,10 +847,14 @@
     </a>
     <nav>
       <a href="#capturas" class="activo">Capturas</a>
+      <a href="#pescadores">Pescadores</a>
       <a href="#spots">Spots</a>
       <a href="#ranking">Ranking</a>
       <a href="#" class="btn-publicar" onclick="abrirModal(event)">+ Publicar</a>
     </nav>
+    <div id="zona-usuario">
+      <button class="btn-usuario" onclick="abrirModalUsuario()">Entrar / Registrarse</button>
+    </div>
   </div>
 </header>
 
@@ -809,8 +955,20 @@
   </div>
 </section>
 
+<!-- ── PESCADORES ── -->
+<section id="pescadores" style="background: #eee9df;">
+  <div class="seccion-inner">
+    <div class="linea-decorativa"></div>
+    <h2 class="seccion-titulo">Pescadores de la comunidad</h2>
+    <p class="seccion-subtitulo">Conoce a los miembros registrados</p>
+    <div class="grid-pescadores" id="lista-pescadores">
+      <div class="cargando">Cargando pescadores... 🎣</div>
+    </div>
+  </div>
+</section>
+
 <!-- ── SPOTS ── -->
-<section id="spots" style="background: #eee9df;">
+<section id="spots" style="background: var(--crema);">
   <div class="seccion-inner">
     <div class="linea-decorativa"></div>
     <h2 class="seccion-titulo">Mapa de spots</h2>
@@ -913,6 +1071,60 @@
   </div>
 </footer>
 
+<!-- ── MODAL USUARIO ── -->
+<div class="modal-overlay" id="modal-usuario">
+  <div class="modal">
+    <h2 id="modal-usuario-titulo">👤 Bienvenido</h2>
+    <div class="tabs">
+      <button class="tab activa" onclick="cambiarTab('registro')">Registrarse</button>
+      <button class="tab" onclick="cambiarTab('login')">Ya tengo cuenta</button>
+    </div>
+
+    <!-- Panel registro -->
+    <div class="panel-tab visible" id="panel-registro">
+      <div class="msg-error" id="error-registro"></div>
+      <div class="msg-exito" id="exito-registro"></div>
+      <div class="campo">
+        <label>Nombre completo</label>
+        <input type="text" id="reg-nombre" placeholder="Ej: Juan Martínez" />
+      </div>
+      <div class="campo">
+        <label>Apodo de pescador</label>
+        <input type="text" id="reg-apodo" placeholder="Ej: juanpescador92" />
+      </div>
+      <div class="campo">
+        <label>Email</label>
+        <input type="email" id="reg-email" placeholder="tu@email.com" />
+      </div>
+      <div class="campo">
+        <label>Ubicación (opcional)</label>
+        <input type="text" id="reg-ubicacion" placeholder="Ej: Tenerife Norte" />
+      </div>
+      <div class="campo">
+        <label>Sobre ti (opcional)</label>
+        <textarea id="reg-bio" placeholder="Cuéntanos algo de tu pesca..."></textarea>
+      </div>
+      <div class="modal-acciones">
+        <button class="btn-cancelar" onclick="cerrarModalUsuario()">Cancelar</button>
+        <button class="btn-primario" onclick="registrarPescador()">Crear perfil</button>
+      </div>
+    </div>
+
+    <!-- Panel login -->
+    <div class="panel-tab" id="panel-login">
+      <div class="msg-error" id="error-login"></div>
+      <div class="campo">
+        <label>Tu apodo</label>
+        <input type="text" id="login-apodo" placeholder="Ej: juanpescador92" />
+      </div>
+      <div class="modal-acciones">
+        <button class="btn-cancelar" onclick="cerrarModalUsuario()">Cancelar</button>
+        <button class="btn-primario" onclick="loginPescador()">Entrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- ── MODAL PUBLICAR ── -->
 <div class="modal-overlay" id="modal">
   <div class="modal">
@@ -948,9 +1160,185 @@
 <div class="toast" id="toast">✅ ¡Captura publicada!</div>
 
 <script>
-  // Modal
+  // ── SUPABASE ──
+  const { createClient } = supabase;
+  const sb = createClient(
+    'https://sriadnsmthewtosuwcur.supabase.co',
+    'sb_publishable_5zSSdPdOP0S6NdPucyO7_w_a13WKdjX'
+  );
+
+  // ── ESTADO DE SESIÓN (guardado en localStorage) ──
+  let usuarioActual = JSON.parse(localStorage.getItem('pesca_usuario') || 'null');
+
+  // Al cargar la página
+  document.addEventListener('DOMContentLoaded', () => {
+    actualizarZonaUsuario();
+    cargarPescadores();
+  });
+
+  // ── ZONA USUARIO EN HEADER ──
+  function actualizarZonaUsuario() {
+    const zona = document.getElementById('zona-usuario');
+    if (usuarioActual) {
+      const iniciales = usuarioActual.nombre.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase();
+      zona.innerHTML = `
+        <div class="usuario-info">
+          <div class="avatar" style="background:var(--verde-salvia); width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:0.8rem; color:white; font-weight:700;">${iniciales}</div>
+          <span class="usuario-nombre">${usuarioActual.apodo}</span>
+          <button class="btn-salir" onclick="cerrarSesion()">Salir</button>
+        </div>`;
+    } else {
+      zona.innerHTML = `<button class="btn-usuario" onclick="abrirModalUsuario()">Entrar / Registrarse</button>`;
+    }
+  }
+
+  function cerrarSesion() {
+    usuarioActual = null;
+    localStorage.removeItem('pesca_usuario');
+    actualizarZonaUsuario();
+    mostrarToast('👋 Hasta pronto');
+  }
+
+  // ── MODAL USUARIO ──
+  function abrirModalUsuario() {
+    document.getElementById('modal-usuario').classList.add('abierto');
+  }
+
+  function cerrarModalUsuario() {
+    document.getElementById('modal-usuario').classList.remove('abierto');
+    limpiarMensajes();
+  }
+
+  document.getElementById('modal-usuario').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalUsuario();
+  });
+
+  function cambiarTab(tab) {
+    document.querySelectorAll('.tab').forEach((t,i) => {
+      t.classList.toggle('activa', (tab==='registro' && i===0) || (tab==='login' && i===1));
+    });
+    document.getElementById('panel-registro').classList.toggle('visible', tab==='registro');
+    document.getElementById('panel-login').classList.toggle('visible', tab==='login');
+    limpiarMensajes();
+  }
+
+  function limpiarMensajes() {
+    ['error-registro','exito-registro','error-login'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) { el.style.display='none'; el.textContent=''; }
+    });
+  }
+
+  function mostrarError(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  function mostrarExito(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.style.display = 'block';
+  }
+
+  // ── REGISTRO ──
+  async function registrarPescador() {
+    const nombre    = document.getElementById('reg-nombre').value.trim();
+    const apodo     = document.getElementById('reg-apodo').value.trim();
+    const email     = document.getElementById('reg-email').value.trim();
+    const ubicacion = document.getElementById('reg-ubicacion').value.trim();
+    const bio       = document.getElementById('reg-bio').value.trim();
+
+    if (!nombre || !apodo || !email) {
+      mostrarError('error-registro', '⚠️ Nombre, apodo y email son obligatorios');
+      return;
+    }
+
+    const { data, error } = await sb
+      .from('pescadores')
+      .insert([{ nombre, apodo, email, ubicacion: ubicacion||null, bio: bio||null }])
+      .select()
+      .single();
+
+    if (error) {
+      if (error.code === '23505') {
+        mostrarError('error-registro', '⚠️ Ese apodo o email ya está en uso');
+      } else {
+        mostrarError('error-registro', '❌ Error: ' + error.message);
+      }
+      return;
+    }
+
+    usuarioActual = data;
+    localStorage.setItem('pesca_usuario', JSON.stringify(data));
+    mostrarExito('exito-registro', '✅ ¡Perfil creado! Bienvenido, ' + apodo);
+    actualizarZonaUsuario();
+    cargarPescadores();
+    setTimeout(cerrarModalUsuario, 1500);
+  }
+
+  // ── LOGIN (por apodo) ──
+  async function loginPescador() {
+    const apodo = document.getElementById('login-apodo').value.trim();
+    if (!apodo) { mostrarError('error-login', '⚠️ Introduce tu apodo'); return; }
+
+    const { data, error } = await sb
+      .from('pescadores')
+      .select('*')
+      .eq('apodo', apodo)
+      .single();
+
+    if (error || !data) {
+      mostrarError('error-login', '❌ No encontramos ese apodo. ¿Te has registrado?');
+      return;
+    }
+
+    usuarioActual = data;
+    localStorage.setItem('pesca_usuario', JSON.stringify(data));
+    actualizarZonaUsuario();
+    mostrarToast('¡Bienvenido de vuelta, ' + data.apodo + '! 🎣');
+    cerrarModalUsuario();
+  }
+
+  // ── CARGAR PESCADORES ──
+  async function cargarPescadores() {
+    const contenedor = document.getElementById('lista-pescadores');
+    const { data, error } = await sb
+      .from('pescadores')
+      .select('*')
+      .order('puntos', { ascending: false })
+      .limit(12);
+
+    if (error) {
+      contenedor.innerHTML = '<div class="cargando">Error cargando pescadores 😕</div>';
+      return;
+    }
+
+    if (!data || data.length === 0) {
+      contenedor.innerHTML = '<div class="cargando">Aún no hay pescadores registrados. ¡Sé el primero! 🎣</div>';
+      return;
+    }
+
+    contenedor.innerHTML = data.map(p => {
+      const iniciales = p.nombre.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+      return `
+        <div class="tarjeta-pescador">
+          <div class="avatar-grande">${iniciales}</div>
+          <div class="pescador-apodo">@${p.apodo}</div>
+          <div class="pescador-ubicacion">${p.ubicacion || 'Canarias 🏝️'}</div>
+          <div class="pescador-puntos">${p.puntos} pts</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── MODAL PUBLICAR ──
   function abrirModal(e) {
     e.preventDefault();
+    if (!usuarioActual) {
+      mostrarToast('⚠️ Primero entra o regístrate para publicar');
+      abrirModalUsuario();
+      return;
+    }
     document.getElementById('modal').classList.add('abierto');
   }
 
@@ -962,15 +1350,14 @@
     if (e.target === this) cerrarModal();
   });
 
-  // Publicar (demo sin backend)
   function publicarCaptura() {
     const especie = document.getElementById('especie').value.trim();
     if (!especie) { alert('Indica al menos la especie'); return; }
     cerrarModal();
-    mostrarToast('✅ ¡Captura publicada! (pronto conectamos con Supabase)');
+    mostrarToast('✅ ¡Captura publicada! (guardar en Supabase llega en Fase 3)');
   }
 
-  // Toast
+  // ── TOAST ──
   function mostrarToast(msg) {
     const t = document.getElementById('toast');
     t.textContent = msg;
@@ -978,7 +1365,7 @@
     setTimeout(() => t.classList.remove('visible'), 3500);
   }
 
-  // Like toggle
+  // ── LIKES ──
   function toggleLike(btn) {
     const liked = btn.textContent.startsWith('❤️');
     const num = parseInt(btn.textContent.replace(/\D+/g,''));
